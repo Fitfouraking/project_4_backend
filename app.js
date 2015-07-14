@@ -1,7 +1,7 @@
 require('dotenv').load();
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
+// var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -10,19 +10,22 @@ var cors = require('cors');
 var passport = require('passport');
 var express_session = require('express-session');
 var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/housingdb');
+
 var config = require('./config');
 
 //CREATE AN INSTANCE OF AN EXPRESS APP
 var app = express();
-mongoose.connect(config.mongo.dbUrl)
+// mongoose.connect(config.mongo.dbUrl)
 
+//CORS SHIT
+var corsOptions = {
+ methods: ['GET', 'PUT', 'POST'],
+ origin: 'http://localhost:5000',
+ credentials: true
+};
 
-//ROUTES
-var loginRoutes = require('./routes/auth.js');
-app.use('/auth', loginRoutes);
-
-var userRoutes = require('./routes/users.js');
-app.use('/user', userRoutes);
+app.use(cors(corsOptions));
 
 
 //SCHEMA
@@ -30,6 +33,9 @@ var User = require('./models/user.js');
 var Address = require('./models/address.js');
 var Listing = require('./models/listing.js');
 
+
+var initPassport = require('./passport/init');
+initPassport(passport);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -44,10 +50,12 @@ app.use(express_session({secret: 'fitfouraking', resave: false, saveUninitialize
 app.use(passport.initialize());
 app.use(passport.session());
 
-var initPassport = require('./passport/init');
-initPassport(passport);
+//ROUTES
+var loginRoutes = require('./routes/auth.js');
+app.use('/auth', loginRoutes(passport));
 
-
+var apiRoutes = require('./routes/apiRoutes.js');
+app.use('/user', apiRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -62,7 +70,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.send({
       message: err.message,
       error: err
     });
@@ -73,7 +81,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
+  res.send({
     message: err.message,
     error: {}
   });

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var addressSchema = require('./address.js');
 
-var listingSchema = new mongoose.Listing({
+var listingSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true

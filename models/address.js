@@ -24,9 +24,9 @@ var addressSchema = new mongoose.Schema({
     }
   },
   zipCode: {
-    type: String,
+    type: Number,
     required: true,
-    match: /^\d{5}(-\d{4})?$/
+    // match: /^\d{5}(-\d{4})?$/
   },
   country: String
 });

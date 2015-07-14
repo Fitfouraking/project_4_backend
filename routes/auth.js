@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/user.js');
 var async = require('async');
+var passport = require('passport');
 
 var isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler
@@ -16,23 +17,25 @@ var isAuthenticated = function(req, res, next) {
 
 module.exports = function(passport) {
 
-  // /* GET login page. */
-  // router.get('/', function(req, res) {
-  //   // Display the Login page with any flash message, if any
-  //  res.status(200);
-  //  res.end();
-  // });
+  /* GET login page. */
+  router.get('/', function(req, res) {
+   res.status(200);
+   res.end();
+  });
 
    /* Handle Login POST */
   router.post('/login', passport.authenticate('login'), function(req, res) {
     res.status(200);
     res.end();
   });
+
   /* Handle Registration POST */
   router.post('/signup', passport.authenticate('signup'), function(req, res) {
+
     res.status(200);
     res.end();
   });
+
 
   // /* GET Profile Page */
   // router.get('/user', isAuthenticated, function(req, res) {

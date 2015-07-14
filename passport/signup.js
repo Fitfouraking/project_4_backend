@@ -20,7 +20,8 @@ module.exports = function(passport){
                     // already exists
                     if (user) {
                         console.log('User already exists with username: '+username);
-                        return done(null, false);
+                        var e = new Error("User already exists.");
+                        return done(e, false);
                     } else {
                         // if there is no user with that email
                         // create the user
@@ -28,16 +29,16 @@ module.exports = function(passport){
                         // set the user's local credentials
                         newUser.username = username;
                         newUser.password = createHash(password);
-                        newUser.email = req.param('email');
-                        newUser.firstName = req.param('firstname');
-                        newUser.lastName = req.param('lastname');
+                        newUser.email = req.params.email;
+                        newUser.firstName = req.params.firstName;
+                        newUser.lastName = req.params.lastName;
                         // newUser.fullName =req.param('firstName') + " " + req.param('lastName');
 
                         // save the user
                         newUser.save(function(err) {
                             if (err){
                                 console.log('Error in Saving user: '+err);
-                                throw err;
+                                return done(err, false);
                             }
                             console.log('User Registration succesful');
                             return done(null, newUser);
@@ -47,13 +48,13 @@ module.exports = function(passport){
             };
             // Delay the execution of findOrCreateUser and execute the method
             // in the next tick of the event loop
-            // process.nextTick(findOrCreateUser);
+            process.nextTick(findOrCreateUser);
         })
     );
 
     // Generates hash using bCrypt
     var createHash = function(password){
-        return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
+        return bCrypt.hashSync(password, bCrypt.genSaltSync(10));
     }
 
 }

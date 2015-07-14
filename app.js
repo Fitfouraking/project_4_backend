@@ -21,12 +21,14 @@ mongoose.connect(config.mongo.dbUrl)
 var loginRoutes = require('./routes/auth.js');
 app.use('/auth', loginRoutes);
 
-// var userRoutes = require('./routes/users.js');
-// app.use('/user', userRoutes);
+var userRoutes = require('./routes/users.js');
+app.use('/user', userRoutes);
 
 
-//USER
+//SCHEMA
 var User = require('./models/user.js');
+var Address = require('./models/address.js');
+var Listing = require('./models/listing.js');
 
 
 // uncomment after placing your favicon in /public

@@ -7,24 +7,30 @@ var Address = require('../models/address.js');
 var Listing = require('../models/listing.js');
 
 
-//LISTING ROUTES
-
-//Show all listings
-router.get('/listings', function(req, res) {
-  Listing.find({}, function(err, listingResults) {
+//USER ROUTES
+router.get('/all', function(req, res) {
+  User.find({}, function(err, userResults) {
     if (err) {
       console.log(err);
       res.sendStatus(404);
     }
-    res.json(listingResults);
+    res.json(userResults);
   });
 });
 
 
-//Show a specific listing
-router.get('/listing/:id', function(req, res) {
-  Listing.find({
+//LISTING ROUTES
+
+//Show a listing
+router.get('/:id/listing/:listing_id', function(req, res) {
+  User.find({
     _id: req.params.id
+  }, {
+    questions: {
+      $elemMatch: {
+        _id: req.params.listing_id
+      }
+    }
   }, function(err, listing) {
     if (err) {
       console.log(err);
@@ -36,44 +42,64 @@ router.get('/listing/:id', function(req, res) {
 
 
 //Create a new listing
-router.post('/listing/new', jsonParser);
-router.post('/listing/new', function(req, res) {
-  Listing.create(req.body, function(error, listing) {
-    if (error) {
-      console.log(error);
-      res.sendStatus(400);
-    } else {
-      res.sendStatus(201);
+router.post('/:id/new/', jsonParser);
+router.post('/:id/new/', function(req, res) {
+  User.update({
+    _id: req.params.id,
+  }, {
+    $push: {
+      listing: req.body
     }
+  }, function(err, listing) {
+    if (err) {
+      console.log(err);
+      res.sendStatus(400);
+    }
+    console.log(listing);
+    res.sendStatus(201);
   });
 });
 
 
 //Edit an existing Listing
-router.put('/listing/:id', jsonParser);
-router.put('/listing/:id', function(req, res) {
-  Listing.findByIdAndUpdate(req.params.id, req.body, function(error, listing) {
-    if (error) {
-      console.log(error);
-      res.sendStatus(400);
-    } else {
-      res.sendStatus(200);
+router.put('/:id/listing/:listing_id', jsonParser);
+router.put('/:id/listing/:listing_id', function(req, res) {
+  User.update({
+    _id: req.params.id,
+    'listing._id': req.params.listing_id
+  }, {
+    $set: {
+      'listing.$': req.body
     }
+  }, function(err, listing) {
+    if (err) {
+      console.log(err);
+      res.sendStatus(400);
+    }
+    console.log('updated the listing.');
+    res.sendStatus(200);
   });
 });
 
 
+
 //Delete a listing
-router.delete('/:id', function(req, res) {
-  Listing.remove({
-    _id: req.params.id
-  }, function(error) {
-    if (error) {
-      console.log(error);
-      res.sendStatus(400);
-    } else {
-      res.sendStatus(204);
+router.delete('/:id/listing/:listing_id', function(req, res) {
+  User.update({
+    _id: req.params.id,
+  }, {
+    $pull: {
+      listing: {
+        _id: req.params.listing_id
+      }
     }
+  }, function(err, listing) {
+    if (err) {
+      console.log(err);
+      res.sendStatus(400);
+    }
+    console.log('listing successfully deleted.');
+    res.sendStatus(204);
   });
 });
 

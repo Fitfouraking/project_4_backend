@@ -1,8 +1,5 @@
 var mongoose = require('mongoose');
 var passportLocalMongoose = require('passport-local-mongoose');
-var Address = require('./address.js');
-var Listing = require('./listing.js');
-
 
 var enumeratedStates = ['AL AK AS AZ AR CA CO CT DE DC FM FL',
   'GA GU HI ID IL IN IA KS KY LA ME MH MD MA MI MN MS MO MT',

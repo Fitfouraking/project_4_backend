@@ -29,9 +29,9 @@ app.use(cors(corsOptions));
 
 
 //SCHEMA
+// var Address = require('./models/address.js');
+// var Listing = require('./models/listing.js');
 var User = require('./models/user.js');
-var Address = require('./models/address.js');
-var Listing = require('./models/listing.js');
 
 
 var initPassport = require('./passport/init');

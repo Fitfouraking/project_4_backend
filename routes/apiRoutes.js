@@ -2,9 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 var router = express.Router();
-var User = require('../models/user.js');
-var Address = require('../models/address.js');
 var Listing = require('../models/listing.js');
+var User = require('../models/user.js');
 
 
 //USER ROUTES
@@ -18,19 +17,37 @@ router.get('/all', function(req, res) {
   });
 });
 
+router.get('/user/:id', function(req, res) {
+  User.find({
+    _id: req.params.id
+  }, function(err, user) {
+    if (err) {
+      console.log(err);
+      res.sendStatus(404);
+    }
+    res.json(user);
+  });
+});
+
 
 //LISTING ROUTES
 
-//Show a listing
-router.get('/:id/listing/:listing_id', function(req, res) {
-  User.find({
-    _id: req.params.id
-  }, {
-    questions: {
-      $elemMatch: {
-        _id: req.params.listing_id
-      }
+//Show all listings
+router.get('/listings', function(req, res) {
+  Listing.find({}, function(err, allListings) {
+    if (err) {
+      console.log(err);
+      res.sendStatus(404);
     }
+    res.json(allListings);
+  });
+});
+
+
+//Show specific listing
+router.get('/listing/:id', function(req, res) {
+  Listing.find({
+    _id: req.params.id
   }, function(err, listing) {
     if (err) {
       console.log(err);
@@ -41,42 +58,50 @@ router.get('/:id/listing/:listing_id', function(req, res) {
 });
 
 
+
 //Create a new listing
-router.post('/:id/new/', jsonParser);
-router.post('/:id/new/', function(req, res) {
-  User.update({
-    _id: req.params.id,
-  }, {
-    $push: {
-      listing: req.body
-    }
-  }, function(err, listing) {
-    if (err) {
-      console.log(err);
+router.post('/listing', jsonParser);
+router.post('/listing', function(req, res) {
+  Listing.create(req.body, function(error, listing) {
+    if (error) {
+      console.log(error);
       res.sendStatus(400);
+    } else {
+      res.sendStatus(201);
     }
-    console.log(listing);
-    res.sendStatus(201);
   });
 });
 
 
 //Edit an existing Listing
-router.put('/:id/listing/:listing_id', jsonParser);
-router.put('/:id/listing/:listing_id', function(req, res) {
-  User.update({
+router.put('/listing/:id', jsonParser);
+router.put('/listing/:id', function(req, res) {
+  Listing.findByIdAndUpdate(req.params.id, req.body, function(error, listing) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(400);
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
+//Edit an address within a Listing
+router.put('/listing/:id/address/:address_id', jsonParser);
+router.put('/listing/:id/address/:address_id', function(req, res) {
+  Listing.update({
     _id: req.params.id,
-    'listing._id': req.params.listing_id
+    'address._id': req.params.address_id
   }, {
     $set: {
-      'listing.$': req.body
+      'address.$': req.body
     }
-  }, function(err, listing) {
+  }, function(err, address) {
     if (err) {
       console.log(err);
       res.sendStatus(400);
     }
-    console.log('updated the listing.');
+    console.log('updated address');
     res.sendStatus(200);
   });
 });
@@ -84,22 +109,16 @@ router.put('/:id/listing/:listing_id', function(req, res) {
 
 
 //Delete a listing
-router.delete('/:id/listing/:listing_id', function(req, res) {
-  User.update({
-    _id: req.params.id,
-  }, {
-    $pull: {
-      listing: {
-        _id: req.params.listing_id
-      }
-    }
-  }, function(err, listing) {
-    if (err) {
-      console.log(err);
+router.delete('/listing/:id', function(req, res) {
+  Listing.remove({
+    _id: req.params.id
+  }, function(error) {
+    if (error) {
+      console.log(error);
       res.sendStatus(400);
+    } else {
+      res.sendStatus(204);
     }
-    console.log('listing successfully deleted.');
-    res.sendStatus(204);
   });
 });
 

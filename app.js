@@ -30,7 +30,7 @@ app.use(cors(corsOptions));
 
 //SCHEMA
 // var Address = require('./models/address.js');
-// var Listing = require('./models/listing.js');
+var Listing = require('./models/listing.js');
 var User = require('./models/user.js');
 
 
@@ -55,7 +55,7 @@ var loginRoutes = require('./routes/auth.js');
 app.use('/auth', loginRoutes(passport));
 
 var apiRoutes = require('./routes/apiRoutes.js');
-app.use('/user', apiRoutes);
+app.use('/api', apiRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

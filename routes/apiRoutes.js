@@ -7,13 +7,26 @@ var User = require('../models/user.js');
 
 
 //USER ROUTES
-router.get('/all', function(req, res) {
+router.get('/users/all', function(req, res) {
   User.find({}, function(err, userResults) {
     if (err) {
       console.log(err);
       res.sendStatus(404);
     }
     res.json(userResults);
+  });
+});
+
+router.get('/users/:id/listings', function(req, res) {
+  var userID = req.params.id;
+  Listing.find({
+//    admin: userID
+  }, function(err,listings){
+     if (err) {
+      console.log(err);
+      res.sendStatus(404);
+    }
+    res.json(listings);
   });
 });
 

@@ -44,7 +44,7 @@ initPassport(passport);
 app.use(cors({origin:'http://localhost:5000', credentials: true}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+// app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser('fitfouraking'));
 app.use(express_session({secret: 'fitfouraking', resave: false, saveUninitialized: true}));
 app.use(passport.initialize());

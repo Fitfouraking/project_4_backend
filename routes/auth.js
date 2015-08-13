@@ -26,12 +26,12 @@ module.exports = function(passport) {
    /* Handle Login POST */
   router.post('/login', passport.authenticate('login'), function(req, res) {
     res.status(200);
-    res.end();
+    console.log("User afrter login is " + req.user);
+    res.json({id: req.user._id, email: req.user.email, username: req.user.username});
   });
 
   /* Handle Registration POST */
   router.post('/signup', passport.authenticate('signup'), function(req, res) {
-
     res.status(200);
     res.end();
   });

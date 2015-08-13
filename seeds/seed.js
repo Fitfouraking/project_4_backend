@@ -10,9 +10,9 @@ var removeSeed = function(done) {
   User.remove({}, done);
 };
 
-
+var currentUser;
 var createUser = function(done) {
-  User.create({
+  currentUser = User.create({
     firstName: 'Bill',
     lastName: 'Murray',
     email: 'bill@yahoo.com',
@@ -24,7 +24,7 @@ var createUser = function(done) {
 
 var createListing = function(done) {
   Listing.create({
-    admin: 'bill',
+    admin: currentUser._id,
     address: [{
         street: '123 A Street',
         secondStreet: '',

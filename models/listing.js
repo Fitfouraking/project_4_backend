@@ -2,6 +2,10 @@ var mongoose = require('mongoose');
 var addressSchema = require('./address.js');
 
 var listingSchema = new mongoose.Schema({
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user"
+  },
   address: [addressSchema
   ],
   startDate: {

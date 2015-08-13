@@ -28,6 +28,7 @@ module.exports = function(passport){
                     // User and password both match, return user from done method
                     // which will be treated like succes
                     console.log(user);
+                    req.user = user;
                     return done(null, user);
                 }
             );
